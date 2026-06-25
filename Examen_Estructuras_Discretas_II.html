@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen de Estructuras Discretas II — PUCE</title>
+<style>
+  :root{
+    --bg:#eef1f4;
+    --paper:#ffffff;
+    --ink:#28333f;
+    --muted:#6c7785;
+    --line:#dde3e9;
+    --accent:#4f6d7a;
+    --accent-d:#3c5560;
+    --accent-2:#7c9885;
+    --accent-soft:#e7eef0;
+    --sage-soft:#eef3ee;
+    --warn:#b07d56;
+    --code-bg:#f4f6f8;
+    --shadow:0 1px 2px rgba(40,51,63,.06), 0 6px 18px rgba(40,51,63,.05);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:90px}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; font-size:15px;
+  }
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace}
+
+  /* Header */
+  header.site{
+    background:var(--paper); border-bottom:1px solid var(--line);
+    padding:26px 22px 20px; text-align:center; position:relative;
+  }
+  header.site .crest{
+    font-family:Georgia,"Times New Roman",serif; font-weight:700;
+    font-size:clamp(20px,3.4vw,30px); letter-spacing:.3px; color:var(--accent-d); margin:0;
+  }
+  header.site .rule{
+    width:120px; height:0; margin:12px auto 10px;
+    border-top:1px solid var(--accent); border-bottom:3px double var(--accent);
+  }
+  header.site .sub{ font-size:clamp(14px,2.2vw,18px); color:var(--ink); margin:2px 0 12px; font-weight:600 }
+  header.site .names{ color:var(--muted); font-size:14px }
+  header.site .names b{ color:var(--ink); font-weight:600 }
+
+  /* Layout */
+  .wrap{ max-width:1240px; margin:0 auto; padding:22px 18px 80px; display:grid; grid-template-columns:264px 1fr; gap:26px; align-items:start }
+  aside.toc{ position:sticky; top:18px; background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); max-height:calc(100vh - 36px); overflow:auto }
+  aside.toc h3{ margin:0; padding:14px 16px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line) }
+  aside.toc a{ display:flex; gap:10px; align-items:baseline; padding:7px 16px; color:var(--ink); text-decoration:none; font-size:13.5px; border-left:3px solid transparent }
+  aside.toc a .n{ color:var(--accent); font-family:ui-monospace,Menlo,monospace; font-size:12px; min-width:22px }
+  aside.toc a:hover{ background:var(--accent-soft) }
+  aside.toc a.active{ background:var(--accent-soft); border-left-color:var(--accent); font-weight:600 }
+  aside.toc .grp{ padding:10px 16px 4px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-2); font-weight:700 }
+
+  .mobile-nav{ display:none }
+
+  main{ min-width:0 }
+
+  /* Algorithm card */
+  section.algo{ background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px 22px 20px; margin-bottom:22px; scroll-margin-top:84px }
+  .algo-head{ display:flex; align-items:center; gap:14px; margin-bottom:8px }
+  .algo-head .num{ font-family:ui-monospace,Menlo,monospace; font-size:14px; font-weight:700; color:#fff; background:var(--accent); border-radius:9px; padding:6px 10px; min-width:40px; text-align:center }
+  .algo-head h2{ margin:0; font-size:19px; color:var(--accent-d); font-family:Georgia,serif }
+  .desc{ color:var(--ink); margin:6px 0 12px }
+  .meta{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; background:var(--code-bg); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:16px }
+  .meta h4{ margin:0 0 6px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted) }
+  .meta ol,.meta ul{ margin:0; padding-left:18px }
+  .meta li{ margin:2px 0; font-size:13.5px }
+  .badges{ display:flex; flex-wrap:wrap; gap:6px }
+  .badge{ font-family:ui-monospace,Menlo,monospace; font-size:12px; background:var(--sage-soft); color:#4d6b54; border:1px solid #d4e0d6; border-radius:999px; padding:4px 10px }
+  .badge.t{ background:var(--accent-soft); color:var(--accent-d); border-color:#cfdde1 }
+
+  /* Demo controls */
+  .demo{ border-top:1px dashed var(--line); padding-top:14px }
+  .controls{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end; margin-bottom:12px }
+  .field{ display:flex; flex-direction:column; gap:4px }
+  .field label{ font-size:12px; color:var(--muted); font-weight:600 }
+  input[type=text],input[type=number],textarea,select{
+    font-family:inherit; font-size:14px; color:var(--ink); background:#fff;
+    border:1px solid var(--line); border-radius:8px; padding:8px 10px; min-width:90px;
+  }
+  textarea{ min-width:260px; min-height:54px; resize:vertical; font-family:ui-monospace,Menlo,monospace; font-size:13px }
+  input:focus,textarea:focus,select:focus,button:focus-visible,a:focus-visible{ outline:3px solid #bcd0d8; outline-offset:1px }
+  .chk{ display:flex; gap:14px; flex-wrap:wrap; align-items:center }
+  .chk label{ display:flex; gap:6px; align-items:center; font-size:14px; color:var(--ink); font-weight:500 }
+  button{
+    font-family:inherit; font-size:14px; font-weight:600; cursor:pointer;
+    background:var(--accent); color:#fff; border:1px solid var(--accent-d);
+    border-radius:8px; padding:9px 16px;
+  }
+  button:hover{ background:var(--accent-d) }
+  button.ghost{ background:#fff; color:var(--accent-d); border:1px solid var(--line) }
+  button.ghost:hover{ background:var(--accent-soft) }
+  button.sage{ background:var(--accent-2); border-color:#6a866f }
+  button.sage:hover{ background:#6a866f }
+
+  /* Output */
+  .out{ background:var(--code-bg); border:1px solid var(--line); border-radius:10px; padding:14px; min-height:20px; overflow:auto }
+  .out .line{ font-family:ui-monospace,Menlo,monospace; font-size:13px; white-space:pre-wrap }
+  .out .ok{ color:#3f7a4d; font-weight:700 }
+  .out .no{ color:var(--warn); font-weight:700 }
+  .out .kpi{ display:inline-block; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 10px; margin:4px 8px 4px 0; font-family:ui-monospace,Menlo,monospace; font-size:13px }
+  .out .kpi b{ color:var(--accent-d) }
+  .steps{ font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--muted); margin-top:8px; white-space:pre-wrap }
+
+  table.grid{ border-collapse:collapse; font-family:ui-monospace,Menlo,monospace; font-size:13px; margin-top:6px }
+  table.grid th,table.grid td{ border:1px solid var(--line); padding:5px 9px; text-align:center; background:#fff }
+  table.grid th{ background:var(--accent-soft); color:var(--accent-d) }
+  table.grid td.hl{ background:var(--sage-soft); font-weight:700; color:#3f7a4d }
+
+  table.cmp{ border-collapse:collapse; width:100%; font-size:13.5px; margin-top:6px }
+  table.cmp th,table.cmp td{ border:1px solid var(--line); padding:7px 10px; text-align:left }
+  table.cmp th{ background:var(--accent-soft); color:var(--accent-d) }
+  table.cmp td.mono{ font-family:ui-monospace,Menlo,monospace }
+
+  .hashbucket{ display:flex; gap:6px; align-items:center; font-family:ui-monospace,Menlo,monospace; font-size:13px; margin:3px 0 }
+  .hashbucket .idx{ background:var(--accent-soft); color:var(--accent-d); border-radius:6px; padding:2px 8px; min-width:34px; text-align:center }
+  .hashbucket .cell{ background:#fff; border:1px solid var(--line); border-radius:6px; padding:2px 8px }
+  .hashbucket .collide{ border-color:var(--warn); color:var(--warn) }
+
+  svg.viz{ display:block; max-width:100%; height:auto; background:#fff; border:1px solid var(--line); border-radius:10px; margin-top:8px }
+  .empty{ color:var(--muted); font-style:italic; padding:8px }
+
+  footer{ text-align:center; color:var(--muted); font-size:13px; padding:0 18px 40px }
+
+  @media (max-width:920px){
+    .wrap{ grid-template-columns:1fr }
+    aside.toc{ display:none }
+    .mobile-nav{ display:block; position:sticky; top:0; z-index:5; background:var(--bg); padding:10px 0 6px }
+    .mobile-nav select{ width:100%; padding:11px }
+    .meta{ grid-template-columns:1fr }
+  }
+</style>
+</head>
+<body>
+<header class="site">
+  <h1 class="crest">Pontificia Universidad Católica del Ecuador</h1>
+  <div class="rule"></div>
+  <div class="sub">Examen de Estructuras Discretas II</div>
+  <div class="names">Nombres: <b>Shirley Pilataxi</b> &nbsp;·&nbsp; <b>David Ocampo</b></div>
+</header>
+
+<div class="wrap">
+  <aside class="toc" aria-label="Índice de algoritmos">
+    <h3>Índice de algoritmos</h3>
+    <nav id="tocNav"></nav>
+  </aside>
+
+  <main>
+    <div class="mobile-nav">
+      <select id="mobileNav" aria-label="Ir a un algoritmo"></select>
+    </div>
+
+    <!-- ========================= 01 ========================= -->
+    <section class="algo" id="a1" data-title="Coeficientes binomiales (DP)">
+      <div class="algo-head"><span class="num">01</span><h2>Coeficientes binomiales con programación dinámica</h2></div>
+      <p class="desc">Calcula C(n, k) (el número de formas de elegir k elementos de n) reutilizando subproblemas mediante el Triángulo de Pascal: C(n,k) = C(n-1,k-1) + C(n-1,k).</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Se construye una tabla donde la fila i contiene los coeficientes de (a+b)<sup>i</sup>.</li>
+          <li>Bordes en 1: C(i,0)=C(i,i)=1.</li>
+          <li>Cada celda interior suma las dos celdas superiores.</li>
+          <li>Se lee la celda (n, k).</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(n·k)</span><span class="badge">Espacio O(n²) tabla</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="bin-n">n</label><input type="number" id="bin-n" value="6" min="0" max="14"></div>
+          <div class="field"><label for="bin-k">k</label><input type="number" id="bin-k" value="2" min="0" max="14"></div>
+          <button onclick="runBinomial()">Calcular C(n, k)</button>
+        </div>
+        <div class="out" id="out-bin"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 02 ========================= -->
+    <section class="algo" id="a2" data-title="Paquetes de red: P(A) analítica + simulación">
+      <div class="algo-head"><span class="num">02</span><h2>Paquetes de red — calcular P(A) analíticamente y estimar con simulación</h2></div>
+      <p class="desc">Se envían n paquetes; cada uno llega de forma independiente con probabilidad p. El evento A = «llegan al menos k paquetes». Se compara la probabilidad exacta (suma binomial) con una estimación de Monte Carlo.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Analítica: P(A)=Σ<sub>i=k</sub><sup>n</sup> C(n,i)·p<sup>i</sup>·(1-p)<sup>n-i</sup>.</li>
+          <li>Simulación: en cada ensayo se sortean n paquetes y se cuenta si llegan ≥ k.</li>
+          <li>La estimación es (ensayos exitosos)/(total de ensayos).</li>
+          <li>Se reporta el error absoluto entre ambas.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Analítica O(n)</span><span class="badge t">Simulación O(T·n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="net-n">n paquetes</label><input type="number" id="net-n" value="10" min="1" max="40"></div>
+          <div class="field"><label for="net-p">p (llegada)</label><input type="number" id="net-p" value="0.7" min="0" max="1" step="0.05"></div>
+          <div class="field"><label for="net-k">k (al menos)</label><input type="number" id="net-k" value="7" min="0" max="40"></div>
+          <div class="field"><label for="net-t">ensayos</label><input type="number" id="net-t" value="50000" min="100" max="500000" step="1000"></div>
+          <button onclick="runNetwork()">Calcular y simular</button>
+        </div>
+        <div class="out" id="out-net"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 03 ========================= -->
+    <section class="algo" id="a3" data-title="Redundancia paralela">
+      <div class="algo-head"><span class="num">03</span><h2>Redundancia paralela</h2></div>
+      <p class="desc">Varios componentes en paralelo: el sistema funciona si al menos uno funciona. La confiabilidad total es R = 1 − ∏(1 − r<sub>i</sub>), es decir, 1 menos la probabilidad de que todos fallen.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Se ingresan las confiabilidades r<sub>i</sub> de cada componente (0 a 1).</li>
+          <li>Se multiplica la probabilidad de falla (1 − r<sub>i</sub>) de cada uno.</li>
+          <li>R = 1 − ese producto.</li>
+          <li>Más componentes ⇒ mayor confiabilidad.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(n)</span><span class="badge">Espacio O(1)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="par-r">Confiabilidades (coma)</label><input type="text" id="par-r" value="0.9, 0.85, 0.8" style="min-width:220px"></div>
+          <button onclick="runParallel()">Calcular confiabilidad</button>
+        </div>
+        <div class="out" id="out-par"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 04 ========================= -->
+    <section class="algo" id="a4" data-title="Ley Total + Bayes básico">
+      <div class="algo-head"><span class="num">04</span><h2>Ley de la Probabilidad Total + Bayes básico</h2></div>
+      <p class="desc">Dadas causas mutuamente excluyentes B<sub>i</sub> con probabilidad previa y la verosimilitud P(A|B<sub>i</sub>), se calcula P(A) por la ley total y luego la probabilidad posterior P(B<sub>i</sub>|A) por Bayes.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Cada línea es «previa, verosimilitud» de una causa.</li>
+          <li>Ley total: P(A)=Σ P(B<sub>i</sub>)·P(A|B<sub>i</sub>).</li>
+          <li>Bayes: P(B<sub>i</sub>|A)=P(B<sub>i</sub>)·P(A|B<sub>i</sub>)/P(A).</li>
+          <li>Las previas deberían sumar 1.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="bay-rows">Causas — «previa, verosimilitud» por línea</label>
+            <textarea id="bay-rows">0.01, 0.99
+0.99, 0.05</textarea></div>
+          <button onclick="runBayes()">Calcular P(A) y posteriores</button>
+        </div>
+        <div class="out" id="out-bay"></div>
+        <div class="steps">Ejemplo: enfermedad rara (previa 1%) con prueba 99% sensible y 5% de falsos positivos. La fila 1 es «enfermo», la fila 2 «sano».</div>
+      </div>
+    </section>
+
+    <!-- ========================= 05 ========================= -->
+    <section class="algo" id="a5" data-title="Naive Bayes diagnóstico">
+      <div class="algo-head"><span class="num">05</span><h2>Naive Bayes diagnóstico</h2></div>
+      <p class="desc">Clasificador que asume independencia condicional entre síntomas. Para cada clase calcula P(clase)·∏ P(síntoma|clase), luego normaliza para obtener la probabilidad de cada diagnóstico.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Marca los síntomas observados en el paciente.</li>
+          <li>Por cada clase: prior × producto de verosimilitudes (presente o ausente).</li>
+          <li>Se normalizan los puntajes para que sumen 1.</li>
+          <li>Se elige la clase con mayor probabilidad.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(clases·síntomas)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="chk" id="nb-chk"></div>
+          <button onclick="runNaive()">Diagnosticar</button>
+        </div>
+        <div class="out" id="out-nb"></div>
+        <div class="steps">Tabla de verosimilitudes P(síntoma=sí | clase). Clases: Gripe vs. Resfriado.</div>
+      </div>
+    </section>
+
+    <!-- ========================= 06 ========================= -->
+    <section class="algo" id="a6" data-title="Colisiones en tabla hash">
+      <div class="algo-head"><span class="num">06</span><h2>Colisiones en tabla hash</h2></div>
+      <p class="desc">Inserta claves en una tabla de tamaño m usando h(k)=k mod m y encadenamiento (listas por casilla). Cuenta las colisiones y muestra el factor de carga.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Por cada clave se calcula su casilla con k mod m.</li>
+          <li>Si la casilla ya tenía elementos, se cuenta una colisión.</li>
+          <li>La clave se agrega a la cadena de esa casilla.</li>
+          <li>Factor de carga α = n/m.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Inserción prom. O(1)</span><span class="badge t">Peor caso O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="hash-m">Tamaño m</label><input type="number" id="hash-m" value="7" min="1" max="50"></div>
+          <div class="field"><label for="hash-keys">Claves (coma)</label><input type="text" id="hash-keys" value="12, 25, 9, 33, 19, 5, 40, 26" style="min-width:260px"></div>
+          <button onclick="runHash()">Insertar claves</button>
+        </div>
+        <div class="out" id="out-hash"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 07 ========================= -->
+    <section class="algo" id="a7" data-title="Combinaciones con repetición O(k)">
+      <div class="algo-head"><span class="num">07</span><h2>Combinaciones con repetición — O(k)</h2></div>
+      <p class="desc">Cuenta las formas de elegir k elementos de n tipos permitiendo repetición: C(n+k−1, k). Se calcula con la fórmula multiplicativa en tiempo O(k), sin construir tablas.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Resultado = 1.</li>
+          <li>Para i = 0 … k−1: resultado ×= (n+i)/(i+1).</li>
+          <li>Cada paso mantiene un entero exacto.</li>
+          <li>El total es C(n+k−1, k).</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(k)</span><span class="badge">Espacio O(1)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="rep-n">n tipos</label><input type="number" id="rep-n" value="5" min="1" max="40"></div>
+          <div class="field"><label for="rep-k">k a elegir</label><input type="number" id="rep-k" value="3" min="0" max="40"></div>
+          <button onclick="runCombRep()">Calcular</button>
+        </div>
+        <div class="out" id="out-rep"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 08 ========================= -->
+    <section class="algo" id="a8" data-title="MergeSort + verificación">
+      <div class="algo-head"><span class="num">08</span><h2>MergeSort + verificación</h2></div>
+      <p class="desc">Ordena dividiendo el arreglo a la mitad, ordenando cada mitad recursivamente y combinando. Tras ordenar, verifica que el resultado quede no decreciente.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Dividir: partir el arreglo por la mitad.</li>
+          <li>Conquistar: ordenar cada mitad recursivamente.</li>
+          <li>Combinar: mezclar las dos mitades ordenadas.</li>
+          <li>Verificar: comprobar a[i] ≤ a[i+1] para todo i.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(n log n)</span><span class="badge">Espacio O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="ms-arr">Arreglo (coma)</label><input type="text" id="ms-arr" value="38, 27, 43, 3, 9, 82, 10" style="min-width:280px"></div>
+          <button onclick="runMerge()">Ordenar y verificar</button>
+          <button class="ghost" onclick="randomArr('ms-arr')">Arreglo aleatorio</button>
+        </div>
+        <div class="out" id="out-ms"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 09 ========================= -->
+    <section class="algo" id="a9" data-title="Árbol de recursión + Teorema Maestro">
+      <div class="algo-head"><span class="num">09</span><h2>Árbol de recursión + verificación del Teorema Maestro</h2></div>
+      <p class="desc">Para recurrencias T(n)=a·T(n/b)+Θ(n<sup>d</sup>) determina el caso del Teorema Maestro y la complejidad. Despliega el árbol de recursión (trabajo por nivel) como verificación.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Comparar d con log<sub>b</sub>(a).</li>
+          <li>d &lt; log<sub>b</sub>a ⇒ Caso 1: Θ(n<sup>log<sub>b</sub>a</sup>).</li>
+          <li>d = log<sub>b</sub>a ⇒ Caso 2: Θ(n<sup>d</sup> log n).</li>
+          <li>d &gt; log<sub>b</sub>a ⇒ Caso 3: Θ(n<sup>d</sup>).</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge">Resuelve la recurrencia</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="mt-a">a (subproblemas)</label><input type="number" id="mt-a" value="2" min="1" max="64"></div>
+          <div class="field"><label for="mt-b">b (factor)</label><input type="number" id="mt-b" value="2" min="2" max="64"></div>
+          <div class="field"><label for="mt-d">d (f(n)=n^d)</label><input type="number" id="mt-d" value="1" min="0" max="6" step="0.5"></div>
+          <div class="field"><label for="mt-n">n de muestra</label><input type="number" id="mt-n" value="16" min="2" max="4096"></div>
+          <button onclick="runMaster()">Resolver y desplegar árbol</button>
+        </div>
+        <div class="out" id="out-mt"></div>
+        <div class="steps">MergeSort: a=2, b=2, d=1 ⇒ Caso 2 ⇒ Θ(n log n).</div>
+      </div>
+    </section>
+
+    <!-- ========================= 10 ========================= -->
+    <section class="algo" id="a10" data-title="Lista vs matriz de adyacencia">
+      <div class="algo-head"><span class="num">10</span><h2>Lista de adyacencia y matriz de adyacencia — operaciones O(·)</h2></div>
+      <p class="desc">Construye un grafo en ambas representaciones y compara el costo de las operaciones fundamentales. Puedes probar si existe una arista (u, v) en cada estructura.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Matriz: M[u][v]=1 si hay arista (acceso directo).</li>
+          <li>Lista: cada vértice guarda sus vecinos.</li>
+          <li>Matriz favorece consultas; lista favorece grafos dispersos.</li>
+          <li>Prueba la consulta de arista u–v.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge">Matriz: espacio O(V²)</span><span class="badge">Lista: espacio O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="rep-v">Vértices</label><input type="number" id="rep-v" value="5" min="1" max="12"></div>
+          <div class="field"><label for="rep-e">Aristas «u-v» (coma)</label><input type="text" id="rep-e" value="0-1, 0-2, 1-2, 2-3, 3-4" style="min-width:240px"></div>
+          <div class="field"><label for="rep-u">u</label><input type="number" id="rep-u" value="1" min="0" style="min-width:70px"></div>
+          <div class="field"><label for="rep-w">v</label><input type="number" id="rep-w" value="2" min="0" style="min-width:70px"></div>
+          <button onclick="runReps()">Construir y consultar</button>
+        </div>
+        <div class="out" id="out-reps"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 11 ========================= -->
+    <section class="algo" id="a11" data-title="Grados desde lista de adyacencia">
+      <div class="algo-head"><span class="num">11</span><h2>Calcular grados desde lista de adyacencia</h2></div>
+      <p class="desc">Recorre la lista de adyacencia para contar el grado de cada vértice y verifica el lema del apretón de manos: Σ grados = 2·|aristas|.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>El grado de v = tamaño de su lista de vecinos.</li>
+          <li>Se suman todos los grados.</li>
+          <li>La suma debe ser el doble del número de aristas.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="deg-v">Vértices</label><input type="number" id="deg-v" value="5" min="1" max="12"></div>
+          <div class="field"><label for="deg-e">Aristas (coma)</label><input type="text" id="deg-e" value="0-1, 0-2, 1-2, 1-3, 3-4" style="min-width:240px"></div>
+          <button onclick="runDegrees()">Calcular grados</button>
+        </div>
+        <div class="out" id="out-deg"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 12 ========================= -->
+    <section class="algo" id="a12" data-title="Isomorfismo por invariantes">
+      <div class="algo-head"><span class="num">12</span><h2>Verificar isomorfismo por invariantes</h2></div>
+      <p class="desc">Compara dos grafos según invariantes necesarios: número de vértices, número de aristas y secuencia de grados ordenada. Si difieren, no son isomorfos; si coinciden, son candidatos.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Calcular |V|, |E| y la secuencia de grados de cada grafo.</li>
+          <li>Si algún invariante difiere ⇒ NO isomorfos.</li>
+          <li>Si todos coinciden ⇒ posiblemente isomorfos.</li>
+          <li>Los invariantes son necesarios, no suficientes.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="iso-v1">G1 vértices</label><input type="number" id="iso-v1" value="4" min="1" max="12" style="min-width:80px"></div>
+          <div class="field"><label for="iso-e1">G1 aristas</label><input type="text" id="iso-e1" value="0-1, 1-2, 2-3, 3-0" style="min-width:180px"></div>
+          <div class="field"><label for="iso-v2">G2 vértices</label><input type="number" id="iso-v2" value="4" min="1" max="12" style="min-width:80px"></div>
+          <div class="field"><label for="iso-e2">G2 aristas</label><input type="text" id="iso-e2" value="0-2, 2-1, 1-3, 3-0" style="min-width:180px"></div>
+          <button onclick="runIso()">Comparar invariantes</button>
+        </div>
+        <div class="out" id="out-iso"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 13 ========================= -->
+    <section class="algo" id="a13" data-title="Conectividad y circuito de Euler">
+      <div class="algo-head"><span class="num">13</span><h2>Conectividad y circuito de Euler</h2></div>
+      <p class="desc">Verifica si el grafo es conexo y clasifica su recorrido de Euler: hay circuito si todos los vértices tienen grado par; hay camino si exactamente dos tienen grado impar.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Conectividad: BFS desde un vértice no aislado.</li>
+          <li>Contar vértices de grado impar.</li>
+          <li>0 impares + conexo ⇒ circuito de Euler.</li>
+          <li>2 impares + conexo ⇒ camino de Euler.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="eu-v">Vértices</label><input type="number" id="eu-v" value="5" min="1" max="12"></div>
+          <div class="field"><label for="eu-e">Aristas (coma)</label><input type="text" id="eu-e" value="0-1, 1-2, 2-0, 2-3, 3-4, 4-2" style="min-width:260px"></div>
+          <button onclick="runEuler()">Verificar</button>
+        </div>
+        <div class="out" id="out-eu"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 14 ========================= -->
+    <section class="algo" id="a14" data-title="BFS — Búsqueda en anchura">
+      <div class="algo-head"><span class="num">14</span><h2>BFS — Búsqueda en Anchura (Breadth-First Search)</h2></div>
+      <p class="desc">Explora el grafo por niveles desde un origen usando una cola. Encuentra el orden de visita y la distancia mínima (en aristas) a cada vértice.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Encolar el origen con distancia 0.</li>
+          <li>Sacar de la cola, visitar y encolar vecinos no visitados.</li>
+          <li>La distancia del vecino = distancia actual + 1.</li>
+          <li>Termina cuando la cola se vacía.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="bfs-v">Vértices</label><input type="number" id="bfs-v" value="6" min="1" max="12"></div>
+          <div class="field"><label for="bfs-e">Aristas (coma)</label><input type="text" id="bfs-e" value="0-1, 0-2, 1-3, 2-3, 3-4, 4-5" style="min-width:240px"></div>
+          <div class="field"><label for="bfs-s">Origen</label><input type="number" id="bfs-s" value="0" min="0" style="min-width:70px"></div>
+          <button onclick="runBFS()">Ejecutar BFS</button>
+        </div>
+        <div class="out" id="out-bfs"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 15 ========================= -->
+    <section class="algo" id="a15" data-title="DFS — Búsqueda en profundidad">
+      <div class="algo-head"><span class="num">15</span><h2>DFS — Búsqueda en Profundidad (Depth-First Search)</h2></div>
+      <p class="desc">Explora tan profundo como sea posible antes de retroceder, usando recursión (pila). Devuelve el orden de descubrimiento de los vértices.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Marcar el origen como visitado.</li>
+          <li>Para cada vecino no visitado, llamar DFS recursivamente.</li>
+          <li>Al no quedar vecinos, retroceder.</li>
+          <li>Se registra el orden en que se descubren.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="dfs-v">Vértices</label><input type="number" id="dfs-v" value="6" min="1" max="12"></div>
+          <div class="field"><label for="dfs-e">Aristas (coma)</label><input type="text" id="dfs-e" value="0-1, 0-2, 1-3, 2-3, 3-4, 4-5" style="min-width:240px"></div>
+          <div class="field"><label for="dfs-s">Origen</label><input type="number" id="dfs-s" value="0" min="0" style="min-width:70px"></div>
+          <button onclick="runDFS()">Ejecutar DFS</button>
+        </div>
+        <div class="out" id="out-dfs"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 16 ========================= -->
+    <section class="algo" id="a16" data-title="Algoritmo de Prim">
+      <div class="algo-head"><span class="num">16</span><h2>Algoritmo de Prim</h2></div>
+      <p class="desc">Construye el árbol de expansión mínima (MST) haciendo crecer un único árbol: en cada paso añade la arista más barata que conecta un vértice del árbol con uno fuera de él.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Comenzar con un vértice cualquiera.</li>
+          <li>Elegir la arista mínima que salga del árbol actual.</li>
+          <li>Agregar el nuevo vértice al árbol.</li>
+          <li>Repetir hasta incluir todos los vértices.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">O(V²) o O(E log V)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="prim-v">Vértices</label><input type="number" id="prim-v" value="5" min="1" max="12"></div>
+          <div class="field"><label for="prim-e">Aristas «u-v:peso»</label><input type="text" id="prim-e" value="0-1:4, 0-2:3, 1-2:1, 1-3:2, 2-3:4, 3-4:2, 2-4:5" style="min-width:320px"></div>
+          <button onclick="runPrim()">Construir MST</button>
+        </div>
+        <div class="out" id="out-prim"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 17 ========================= -->
+    <section class="algo" id="a17" data-title="Kruskal con Union-Find">
+      <div class="algo-head"><span class="num">17</span><h2>Kruskal con Union-Find</h2></div>
+      <p class="desc">Construye el MST ordenando las aristas por peso y añadiéndolas si no forman ciclo. La detección de ciclos usa Union-Find (conjuntos disjuntos) con compresión de caminos.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Ordenar todas las aristas por peso ascendente.</li>
+          <li>Cada vértice empieza en su propio conjunto.</li>
+          <li>Tomar una arista si une dos conjuntos distintos.</li>
+          <li>Unir esos conjuntos; descartar si crearían ciclo.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">O(E log E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="krus-v">Vértices</label><input type="number" id="krus-v" value="5" min="1" max="12"></div>
+          <div class="field"><label for="krus-e">Aristas «u-v:peso»</label><input type="text" id="krus-e" value="0-1:4, 0-2:3, 1-2:1, 1-3:2, 2-3:4, 3-4:2, 2-4:5" style="min-width:320px"></div>
+          <button onclick="runKruskal()">Construir MST</button>
+        </div>
+        <div class="out" id="out-krus"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 18 ========================= -->
+    <section class="algo" id="a18" data-title="Verificar árbol + hojas y altura">
+      <div class="algo-head"><span class="num">18</span><h2>Verificar árbol + contar hojas y altura</h2></div>
+      <p class="desc">Comprueba si un grafo no dirigido es un árbol (conexo y con exactamente |V|−1 aristas, sin ciclos). De serlo, cuenta las hojas y calcula la altura desde una raíz dada.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Árbol ⇔ conexo y |E| = |V| − 1.</li>
+          <li>Hojas: vértices de grado 1.</li>
+          <li>Altura: BFS desde la raíz, mayor nivel alcanzado.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(V+E)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="tree-v">Vértices</label><input type="number" id="tree-v" value="6" min="1" max="12"></div>
+          <div class="field"><label for="tree-e">Aristas (coma)</label><input type="text" id="tree-e" value="0-1, 0-2, 1-3, 1-4, 2-5" style="min-width:240px"></div>
+          <div class="field"><label for="tree-r">Raíz</label><input type="number" id="tree-r" value="0" min="0" style="min-width:70px"></div>
+          <button onclick="runVerifyTree()">Verificar</button>
+        </div>
+        <div class="out" id="out-tree"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 19 ========================= -->
+    <section class="algo" id="a19" data-title="Recorridos preorden e inorden">
+      <div class="algo-head"><span class="num">19</span><h2>Recorridos preorden e inorden</h2></div>
+      <p class="desc">Construye un árbol binario de búsqueda con los valores dados y muestra el recorrido preorden (raíz, izq, der) e inorden (izq, raíz, der). El inorden de un BST queda ordenado.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Insertar los valores en un BST.</li>
+          <li>Preorden: visitar raíz, luego subárbol izquierdo, luego derecho.</li>
+          <li>Inorden: izquierdo, raíz, derecho.</li>
+          <li>El inorden produce los valores en orden creciente.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Recorrido O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="trav-arr">Valores (coma)</label><input type="text" id="trav-arr" value="50, 30, 70, 20, 40, 60, 80" style="min-width:280px"></div>
+          <button onclick="runTraversals()">Construir y recorrer</button>
+        </div>
+        <div class="out" id="out-trav"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 20 ========================= -->
+    <section class="algo" id="a20" data-title="Postorden y evaluación de AST">
+      <div class="algo-head"><span class="num">20</span><h2>Recorrido postorden y evaluación de AST</h2></div>
+      <p class="desc">Analiza una expresión aritmética en un árbol de sintaxis (AST), muestra su recorrido postorden (notación polaca inversa) y la evalúa de abajo hacia arriba.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Parsear la expresión respetando precedencia y paréntesis.</li>
+          <li>Construir el AST con operadores y operandos.</li>
+          <li>Postorden: izquierdo, derecho, raíz ⇒ RPN.</li>
+          <li>Evaluar combinando los hijos en cada nodo.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="ast-expr">Expresión</label><input type="text" id="ast-expr" value="(3+4)*2-5" style="min-width:240px"></div>
+          <button onclick="runAST()">Parsear y evaluar</button>
+        </div>
+        <div class="out" id="out-ast"></div>
+        <div class="steps">Operadores soportados: + − * / y paréntesis.</div>
+      </div>
+    </section>
+
+    <!-- ========================= 21 ========================= -->
+    <section class="algo" id="a21" data-title="Recorrido por niveles (Level-Order)">
+      <div class="algo-head"><span class="num">21</span><h2>Recorrido por niveles (Level-Order / BFS en árbol)</h2></div>
+      <p class="desc">Visita el árbol nivel por nivel usando una cola. Es BFS aplicado a un árbol: primero la raíz, luego sus hijos, después los nietos, etc.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Encolar la raíz.</li>
+          <li>Sacar un nodo, visitarlo y encolar sus hijos.</li>
+          <li>Repetir hasta vaciar la cola.</li>
+          <li>Se reporta cada nivel por separado.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Tiempo O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="lvl-arr">Valores (coma)</label><input type="text" id="lvl-arr" value="50, 30, 70, 20, 40, 60, 80" style="min-width:280px"></div>
+          <button onclick="runLevelOrder()">Recorrer por niveles</button>
+        </div>
+        <div class="out" id="out-lvl"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 22 ========================= -->
+    <section class="algo" id="a22" data-title="Búsqueda en BST">
+      <div class="algo-head"><span class="num">22</span><h2>Búsqueda en BST</h2></div>
+      <p class="desc">Busca un valor en un árbol binario de búsqueda comparando en cada nodo: si es menor va a la izquierda, si es mayor a la derecha. Se resalta el camino recorrido.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Comparar el objetivo con la raíz.</li>
+          <li>Menor ⇒ ir al hijo izquierdo; mayor ⇒ al derecho.</li>
+          <li>Igual ⇒ encontrado.</li>
+          <li>Llegar a vacío ⇒ no está.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Prom. O(log n)</span><span class="badge t">Peor caso O(n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="bsts-arr">Valores del BST</label><input type="text" id="bsts-arr" value="50, 30, 70, 20, 40, 60, 80" style="min-width:240px"></div>
+          <div class="field"><label for="bsts-x">Buscar</label><input type="number" id="bsts-x" value="60" style="min-width:90px"></div>
+          <button onclick="runBSTSearch()">Buscar</button>
+        </div>
+        <div class="out" id="out-bsts"></div>
+      </div>
+    </section>
+
+    <!-- ========================= 23 ========================= -->
+    <section class="algo" id="a23" data-title="Inserción en BST">
+      <div class="algo-head"><span class="num">23</span><h2>Inserción en BST</h2></div>
+      <p class="desc">Inserta valores manteniendo la propiedad del BST. Cada nuevo valor desciende comparando hasta encontrar el lugar vacío correcto. El árbol se actualiza en vivo.</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Desde la raíz, comparar el nuevo valor.</li>
+          <li>Menor ⇒ bajar a la izquierda; mayor ⇒ a la derecha.</li>
+          <li>Al llegar a un lugar vacío, colocar el nodo.</li>
+          <li>Los duplicados se ignoran.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Prom. O(log n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="bsti-x">Insertar valor</label><input type="number" id="bsti-x" value="45" style="min-width:110px"></div>
+          <button onclick="runBSTInsert()">Insertar</button>
+          <button class="ghost" onclick="resetBSTInsert()">Reiniciar árbol</button>
+        </div>
+        <div class="out" id="out-bsti"></div>
+        <div class="steps">Árbol inicial: 50, 30, 70, 20, 40, 60, 80.</div>
+      </div>
+    </section>
+
+    <!-- ========================= 24 ========================= -->
+    <section class="algo" id="a24" data-title="Eliminación en BST">
+      <div class="algo-head"><span class="num">24</span><h2>Eliminación en BST</h2></div>
+      <p class="desc">Elimina un valor manejando los tres casos: hoja (se borra), un hijo (se reemplaza por él) y dos hijos (se reemplaza por el sucesor inorden, el mínimo del subárbol derecho).</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Localizar el nodo a eliminar.</li>
+          <li>Hoja ⇒ quitarlo directamente.</li>
+          <li>Un hijo ⇒ el hijo ocupa su lugar.</li>
+          <li>Dos hijos ⇒ sustituir por el sucesor inorden.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Prom. O(log n)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="bstd-x">Eliminar valor</label><input type="number" id="bstd-x" value="30" style="min-width:110px"></div>
+          <button onclick="runBSTDelete()">Eliminar</button>
+          <button class="ghost" onclick="resetBSTDelete()">Reiniciar árbol</button>
+        </div>
+        <div class="out" id="out-bstd"></div>
+        <div class="steps">Árbol inicial: 50, 30, 70, 20, 40, 60, 80.</div>
+      </div>
+    </section>
+
+    <!-- ========================= 25 ========================= -->
+    <section class="algo" id="a25" data-title="Rotaciones AVL — Los 4 tipos">
+      <div class="algo-head"><span class="num">25</span><h2>Rotaciones AVL — Los 4 tipos</h2></div>
+      <p class="desc">Árbol AVL que se autobalancea al insertar. Cuando el factor de balance se rompe aplica una de las cuatro rotaciones: LL (derecha), RR (izquierda), LR (izq-der) o RL (der-izq).</p>
+      <div class="meta">
+        <div><h4>Cómo se ejecuta</h4><ol>
+          <li>Insertar como en un BST y recalcular alturas.</li>
+          <li>Factor de balance = altura(izq) − altura(der).</li>
+          <li>|FB| &gt; 1 ⇒ desbalance: aplicar rotación.</li>
+          <li>LL→rotar derecha, RR→izquierda, LR y RL→dobles.</li>
+        </ol></div>
+        <div><h4>Complejidad</h4><div class="badges"><span class="badge t">Inserción O(log n)</span><span class="badge">Rotación O(1)</span></div></div>
+      </div>
+      <div class="demo">
+        <div class="controls">
+          <div class="field"><label for="avl-x">Insertar valor</label><input type="number" id="avl-x" value="" placeholder="ej. 25" style="min-width:110px"></div>
+          <button onclick="runAVLInsert()">Insertar</button>
+          <button class="ghost" onclick="resetAVL()">Reiniciar</button>
+        </div>
+        <div class="chk" style="margin:4px 0 10px">
+          <button class="sage" onclick="avlPreset('ll')">Demo LL (30,20,10)</button>
+          <button class="sage" onclick="avlPreset('rr')">Demo RR (10,20,30)</button>
+          <button class="sage" onclick="avlPreset('lr')">Demo LR (30,10,20)</button>
+          <button class="sage" onclick="avlPreset('rl')">Demo RL (10,30,20)</button>
+        </div>
+        <div class="out" id="out-avl"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  Examen de Estructuras Discretas II — Pontificia Universidad Católica del Ecuador · Shirley Pilataxi &amp; David Ocampo
+</footer>
+
+<script>
+/* ============================================================
+   UTILIDADES GENERALES
+   ============================================================ */
+function $(id){ return document.getElementById(id); }
+function fmt(x,d){ if(d===undefined)d=4; var s=Number(x).toFixed(d); return s.replace(/\.?0+$/,''); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function parseNums(str){ return String(str).split(/[,\s]+/).map(function(t){return t.trim();}).filter(Boolean).map(Number).filter(function(x){return !isNaN(x);}); }
+function out(id,html){ $(id).innerHTML = html; }
+function kpi(label,val){ return '<span class="kpi">'+label+': <b>'+val+'</b></span>'; }
+
+function parseEdges(str, weighted){
+  var res=[];
+  String(str).split(',').forEach(function(tok){
+    tok=tok.trim(); if(!tok) return;
+    var w=1, body=tok;
+    if(weighted && tok.indexOf(':')>=0){ var p=tok.split(':'); body=p[0]; w=Number(p[1]); }
+    var uv=body.split('-');
+    if(uv.length===2){ var u=parseInt(uv[0],10), v=parseInt(uv[1],10);
+      if(!isNaN(u)&&!isNaN(v)) res.push({u:u,v:v,w:w}); }
+  });
+  return res;
+}
+function buildAdj(n, edges, directed){
+  var adj=[]; for(var i=0;i<n;i++) adj.push([]);
+  edges.forEach(function(e){
+    if(e.u<n && e.v<n){ adj[e.u].push(e.v); if(!directed) adj[e.v].push(e.u); }
+  });
+  for(var i=0;i<n;i++) adj[i].sort(function(a,b){return a-b;});
+  return adj;
+}
+
+/* ============================================================
+   DIBUJO SVG DE GRAFOS (disposición circular)
+   ============================================================ */
+function drawGraph(containerId, n, edges, opts){
+  opts=opts||{};
+  var weighted=!!opts.weighted, highlight=opts.highlight||null, order=opts.order||null, dist=opts.dist||null;
+  var size=Math.max(280, Math.min(440, 70*Math.sqrt(Math.max(n,1))+200));
+  var cx=size/2, cy=size/2, R=size/2-46, r=18;
+  var pos=[];
+  for(var i=0;i<n;i++){ var a=-Math.PI/2 + 2*Math.PI*i/Math.max(n,1); pos.push({x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)}); }
+  var s='<svg class="viz" viewBox="0 0 '+size+' '+size+'" width="'+size+'">';
+  // edges
+  edges.forEach(function(e){
+    if(e.u>=n||e.v>=n) return;
+    var key=Math.min(e.u,e.v)+'-'+Math.max(e.u,e.v);
+    var hot = highlight && highlight.indexOf(key)>=0;
+    var col = hot ? '#7c9885' : '#c4ccd4';
+    var wdt = hot ? 4 : 2;
+    var A=pos[e.u], B=pos[e.v];
+    s+='<line x1="'+A.x+'" y1="'+A.y+'" x2="'+B.x+'" y2="'+B.y+'" stroke="'+col+'" stroke-width="'+wdt+'" />';
+    if(weighted){ var mx=(A.x+B.x)/2, my=(A.y+B.y)/2;
+      s+='<rect x="'+(mx-11)+'" y="'+(my-10)+'" width="22" height="18" rx="4" fill="#fff" stroke="#dde3e9"/>';
+      s+='<text x="'+mx+'" y="'+(my+3)+'" font-size="11" text-anchor="middle" fill="#3c5560" font-family="monospace">'+e.w+'</text>'; }
+  });
+  // nodes
+  for(var i=0;i<n;i++){
+    var p=pos[i];
+    var visited = order && order.indexOf(i)>=0;
+    var fill = visited ? '#4f6d7a' : '#fff';
+    var tcol = visited ? '#fff' : '#28333f';
+    s+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+r+'" fill="'+fill+'" stroke="#4f6d7a" stroke-width="2"/>';
+    s+='<text x="'+p.x+'" y="'+(p.y+4)+'" font-size="13" text-anchor="middle" fill="'+tcol+'" font-family="monospace">'+i+'</text>';
+    if(order){ var ord=order.indexOf(i); if(ord>=0){
+      s+='<circle cx="'+(p.x+14)+'" cy="'+(p.y-14)+'" r="9" fill="#7c9885"/>';
+      s+='<text x="'+(p.x+14)+'" y="'+(p.y-10)+'" font-size="10" text-anchor="middle" fill="#fff" font-family="monospace">'+(ord+1)+'</text>'; } }
+    if(dist && dist[i]!==undefined && dist[i]!==Infinity){
+      s+='<text x="'+p.x+'" y="'+(p.y+r+13)+'" font-size="10" text-anchor="middle" fill="#6c7785" font-family="monospace">d='+dist[i]+'</text>'; }
+  }
+  s+='</svg>';
+  $(containerId).insertAdjacentHTML('beforeend', s);
+}
+
+/* ============================================================
+   DIBUJO SVG DE ÁRBOLES BINARIOS
+   ============================================================ */
+function layoutTree(root){
+  var idx=0, nodes=[], maxD=0;
+  (function rec(nd,depth){ if(!nd) return; rec(nd.left,depth+1); nd._x=idx++; nd._d=depth; if(depth>maxD)maxD=depth; nodes.push(nd); rec(nd.right,depth+1); })(root,0);
+  return {nodes:nodes, count:idx, maxD:maxD};
+}
+function drawTree(containerId, root, highlightKeys){
+  var box=$(containerId);
+  if(!root){ box.insertAdjacentHTML('beforeend','<div class="empty">Árbol vacío</div>'); return; }
+  var hi = highlightKeys||[];
+  var L=layoutTree(root);
+  var padX=26, padY=30, gapX=50, gapY=66, r=18;
+  var w=padX*2 + Math.max(L.count-1,0)*gapX + 2*r;
+  var h=padY*2 + L.maxD*gapY + 2*r;
+  function X(nd){ return padX+r+nd._x*gapX; }
+  function Y(nd){ return padY+r+nd._d*gapY; }
+  var s='<svg class="viz" viewBox="0 0 '+w+' '+h+'" width="'+Math.min(w,640)+'">';
+  L.nodes.forEach(function(nd){
+    if(nd.left){ s+='<line x1="'+X(nd)+'" y1="'+Y(nd)+'" x2="'+X(nd.left)+'" y2="'+Y(nd.left)+'" stroke="#c4ccd4" stroke-width="2"/>'; }
+    if(nd.right){ s+='<line x1="'+X(nd)+'" y1="'+Y(nd)+'" x2="'+X(nd.right)+'" y2="'+Y(nd.right)+'" stroke="#c4ccd4" stroke-width="2"/>'; }
+  });
+  L.nodes.forEach(function(nd){
+    var hot = hi.indexOf(nd.key)>=0;
+    var fill = hot ? '#7c9885' : '#fff';
+    var tcol = hot ? '#fff' : '#28333f';
+    s+='<circle cx="'+X(nd)+'" cy="'+Y(nd)+'" r="'+r+'" fill="'+fill+'" stroke="#4f6d7a" stroke-width="2"/>';
+    s+='<text x="'+X(nd)+'" y="'+(Y(nd)+4)+'" font-size="12" text-anchor="middle" fill="'+tcol+'" font-family="monospace">'+nd.key+'</text>';
+    if(nd.h!==undefined){ s+='<text x="'+(X(nd)+r-2)+'" y="'+(Y(nd)-r+2)+'" font-size="9" text-anchor="middle" fill="#b07d56" font-family="monospace">h'+nd.h+'</text>'; }
+  });
+  s+='</svg>';
+  box.insertAdjacentHTML('beforeend', s);
+}
+
+/* ============================================================
+   01 — Coeficientes binomiales (DP)
+   ============================================================ */
+function runBinomial(){
+  var n=parseInt($('bin-n').value,10), k=parseInt($('bin-k').value,10);
+  if(isNaN(n)||isNaN(k)||n<0||k<0){ out('out-bin','<div class="line no">Ingresa n y k no negativos.</div>'); return; }
+  if(k>n){ out('out-bin','<div class="line">C('+n+','+k+') = <b>0</b> porque k &gt; n.</div>'); return; }
+  var C=[]; for(var i=0;i<=n;i++){ C[i]=[]; for(var j=0;j<=i;j++){ C[i][j]=(j===0||j===i)?1:C[i-1][j-1]+C[i-1][j]; } }
+  var html='<div>'+kpi('C('+n+', '+k+')', C[n][k])+kpi('Operaciones', '~'+(n*k))+'</div>';
+  html+='<div class="line">Triángulo de Pascal (celda resaltada = resultado):</div><table class="grid">';
+  for(var i=0;i<=n;i++){ html+='<tr>'; for(var j=0;j<=i;j++){ var cls=(i===n&&j===k)?' class="hl"':''; html+='<td'+cls+'>'+C[i][j]+'</td>'; } html+='</tr>'; }
+  html+='</table>';
+  out('out-bin',html);
+}
+
+/* ============================================================
+   02 — Paquetes de red: P(A) analítica + simulación
+   ============================================================ */
+function binomCoef(n,k){ if(k<0||k>n) return 0; k=Math.min(k,n-k); var r=1; for(var i=0;i<k;i++){ r=r*(n-i)/(i+1); } return r; }
+function runNetwork(){
+  var n=parseInt($('net-n').value,10), p=parseFloat($('net-p').value), k=parseInt($('net-k').value,10), T=parseInt($('net-t').value,10);
+  if(isNaN(n)||isNaN(p)||isNaN(k)||isNaN(T)||p<0||p>1){ out('out-net','<div class="line no">Revisa los parámetros (p entre 0 y 1).</div>'); return; }
+  var exact=0; for(var i=k;i<=n;i++){ exact += binomCoef(n,i)*Math.pow(p,i)*Math.pow(1-p,n-i); }
+  var hits=0;
+  for(var t=0;t<T;t++){ var c=0; for(var j=0;j<n;j++){ if(Math.random()<p) c++; } if(c>=k) hits++; }
+  var est=hits/T, err=Math.abs(est-exact);
+  var html=kpi('P(A) analítica', fmt(exact,6))+kpi('Estimada (Monte Carlo)', fmt(est,6))+kpi('Error absoluto', fmt(err,6));
+  html+='<div class="line">Evento A = «llegan al menos '+k+' de '+n+' paquetes», cada uno con p='+p+'.</div>';
+  html+='<div class="steps">Ensayos: '+T.toLocaleString('es')+'  ·  éxitos simulados: '+hits.toLocaleString('es')+'</div>';
+  out('out-net',html);
+}
+
+/* ============================================================
+   03 — Redundancia paralela
+   ============================================================ */
+function runParallel(){
+  var rs=parseNums($('par-r').value);
+  if(rs.length===0){ out('out-par','<div class="line no">Ingresa al menos una confiabilidad.</div>'); return; }
+  for(var i=0;i<rs.length;i++){ if(rs[i]<0||rs[i]>1){ out('out-par','<div class="line no">Cada confiabilidad debe estar entre 0 y 1.</div>'); return; } }
+  var prodFail=1; rs.forEach(function(r){ prodFail*=(1-r); });
+  var R=1-prodFail;
+  var steps=rs.map(function(r){return '(1-'+r+')';}).join(' · ');
+  var html=kpi('Confiabilidad del sistema', fmt(R,6))+kpi('Componentes', rs.length);
+  html+='<div class="line">R = 1 − ('+steps+') = 1 − '+fmt(prodFail,6)+' = <b>'+fmt(R,6)+'</b></div>';
+  html+='<div class="line">Probabilidad de falla total: '+fmt(prodFail,6)+'</div>';
+  out('out-par',html);
+}
+
+/* ============================================================
+   04 — Ley total + Bayes
+   ============================================================ */
+function runBayes(){
+  var rows=[];
+  $('bay-rows').value.split('\n').forEach(function(ln){ ln=ln.trim(); if(!ln)return; var p=ln.split(','); var prior=parseFloat(p[0]), like=parseFloat(p[1]); if(!isNaN(prior)&&!isNaN(like)) rows.push({prior:prior,like:like}); });
+  if(rows.length===0){ out('out-bay','<div class="line no">Ingresa al menos una causa «previa, verosimilitud».</div>'); return; }
+  var PA=0; rows.forEach(function(r){ PA+=r.prior*r.like; });
+  var sumPrior=0; rows.forEach(function(r){ sumPrior+=r.prior; });
+  var html=kpi('P(A) (ley total)', fmt(PA,6));
+  if(Math.abs(sumPrior-1)>0.001) html+='<span class="kpi" style="border-color:#b07d56;color:#b07d56">Σ previas = '+fmt(sumPrior,4)+' (≠1)</span>';
+  html+='<table class="cmp"><tr><th>Causa</th><th>Previa</th><th>P(A|B)</th><th>Aporte a P(A)</th><th>Posterior P(B|A)</th></tr>';
+  rows.forEach(function(r,i){ var contrib=r.prior*r.like; var post=PA>0?contrib/PA:0;
+    html+='<tr><td>B'+(i+1)+'</td><td class="mono">'+r.prior+'</td><td class="mono">'+r.like+'</td><td class="mono">'+fmt(contrib,6)+'</td><td class="mono"><b>'+fmt(post,6)+'</b></td></tr>'; });
+  html+='</table>';
+  out('out-bay',html);
+}
+
+/* ============================================================
+   05 — Naive Bayes diagnóstico
+   ============================================================ */
+var NB_SYMPTOMS=['fiebre','tos','dolor muscular','estornudos'];
+var NB_CLASSES=[
+  {name:'Gripe',    prior:0.4, p:{ 'fiebre':0.9,'tos':0.7,'dolor muscular':0.8,'estornudos':0.3 }},
+  {name:'Resfriado',prior:0.6, p:{ 'fiebre':0.2,'tos':0.6,'dolor muscular':0.3,'estornudos':0.8 }}
+];
+function buildNBChecks(){
+  var html=''; NB_SYMPTOMS.forEach(function(s,i){ html+='<label><input type="checkbox" id="nb-'+i+'"'+(i<2?' checked':'')+'> '+s+'</label>'; });
+  $('nb-chk').innerHTML=html;
+}
+function runNaive(){
+  var obs={}; NB_SYMPTOMS.forEach(function(s,i){ obs[s]=$('nb-'+i).checked; });
+  var scores=NB_CLASSES.map(function(c){ var sc=c.prior; NB_SYMPTOMS.forEach(function(s){ sc *= obs[s]? c.p[s] : (1-c.p[s]); }); return sc; });
+  var tot=scores.reduce(function(a,b){return a+b;},0);
+  var best=0; scores.forEach(function(v,i){ if(v>scores[best]) best=i; });
+  var presentes=NB_SYMPTOMS.filter(function(s){return obs[s];});
+  var html=kpi('Diagnóstico', NB_CLASSES[best].name);
+  html+='<div class="line">Síntomas observados: '+(presentes.length?presentes.join(', '):'ninguno')+'</div>';
+  html+='<table class="cmp"><tr><th>Clase</th><th>Puntaje (prior·∏)</th><th>Probabilidad</th></tr>';
+  NB_CLASSES.forEach(function(c,i){ var prob=tot>0?scores[i]/tot:0; var b=(i===best)?' style="background:#eef3ee"':'';
+    html+='<tr'+b+'><td>'+c.name+'</td><td class="mono">'+fmt(scores[i],6)+'</td><td class="mono"><b>'+fmt(prob*100,2)+'%</b></td></tr>'; });
+  html+='</table>';
+  out('out-nb',html);
+}
+
+/* ============================================================
+   06 — Colisiones en tabla hash
+   ============================================================ */
+function runHash(){
+  var m=parseInt($('hash-m').value,10); var keys=parseNums($('hash-keys').value);
+  if(isNaN(m)||m<1){ out('out-hash','<div class="line no">El tamaño m debe ser ≥ 1.</div>'); return; }
+  var buckets=[]; for(var i=0;i<m;i++) buckets.push([]);
+  var collisions=0;
+  keys.forEach(function(k){ var idx=((k%m)+m)%m; if(buckets[idx].length>0) collisions++; buckets[idx].push(k); });
+  var html=kpi('Colisiones', collisions)+kpi('Claves', keys.length)+kpi('Factor de carga α', fmt(keys.length/m,3));
+  html+='<div class="line">h(k) = k mod '+m+'  ·  encadenamiento separado</div><div style="margin-top:6px">';
+  for(var i=0;i<m;i++){ html+='<div class="hashbucket"><span class="idx">['+i+']</span>';
+    if(buckets[i].length===0){ html+='<span style="color:#6c7785">∅</span>'; }
+    else buckets[i].forEach(function(k,j){ var c=(j>0)?' collide':''; html+='<span class="cell'+c+'">'+k+'</span>'+(j<buckets[i].length-1?'<span style="color:#c4ccd4">→</span>':''); });
+    html+='</div>'; }
+  html+='</div>';
+  out('out-hash',html);
+}
+
+/* ============================================================
+   07 — Combinaciones con repetición O(k)
+   ============================================================ */
+function runCombRep(){
+  var n=parseInt($('rep-n').value,10), k=parseInt($('rep-k').value,10);
+  if(isNaN(n)||isNaN(k)||n<1||k<0){ out('out-rep','<div class="line no">n ≥ 1 y k ≥ 0.</div>'); return; }
+  var res=1, steps=[];
+  for(var i=0;i<k;i++){ res = res*(n+i)/(i+1); steps.push('i='+i+': × ('+(n+i)+'/'+(i+1)+') ⇒ '+Math.round(res)); }
+  res=Math.round(res);
+  var html=kpi('C('+(n+k-1)+', '+k+')', res)+kpi('Pasos', k);
+  html+='<div class="line">Elegir '+k+' de '+n+' tipos con repetición = C(n+k−1, k) = <b>'+res+'</b></div>';
+  html+='<div class="steps">'+(steps.length?steps.join('\n'):'k=0 ⇒ 1 forma (conjunto vacío)')+'</div>';
+  out('out-rep',html);
+}
+
+/* ============================================================
+   08 — MergeSort + verificación
+   ============================================================ */
+function runMerge(){
+  var arr=parseNums($('ms-arr').value);
+  if(arr.length===0){ out('out-ms','<div class="line no">Ingresa al menos un número.</div>'); return; }
+  var comps={c:0};
+  function merge(a,b){ var r=[],i=0,j=0; while(i<a.length&&j<b.length){ comps.c++; if(a[i]<=b[j]) r.push(a[i++]); else r.push(b[j++]); } while(i<a.length)r.push(a[i++]); while(j<b.length)r.push(b[j++]); return r; }
+  function ms(a){ if(a.length<=1) return a; var mid=a.length>>1; return merge(ms(a.slice(0,mid)), ms(a.slice(mid))); }
+  var sorted=ms(arr.slice());
+  var ok=true; for(var i=1;i<sorted.length;i++){ if(sorted[i-1]>sorted[i]){ ok=false; break; } }
+  var html=kpi('Comparaciones', comps.c)+kpi('Verificación', '<span class="'+(ok?'ok':'no')+'">'+(ok?'ORDENADO ✓':'ERROR ✗')+'</span>');
+  html+='<div class="line">Entrada:  ['+arr.join(', ')+']</div>';
+  html+='<div class="line">Salida:   ['+sorted.join(', ')+']</div>';
+  out('out-ms',html);
+}
+function randomArr(id){ var n=6+Math.floor(Math.random()*4); var a=[]; for(var i=0;i<n;i++)a.push(Math.floor(Math.random()*90)+1); $(id).value=a.join(', '); }
+
+/* ============================================================
+   09 — Árbol de recursión + Teorema Maestro
+   ============================================================ */
+function runMaster(){
+  var a=parseInt($('mt-a').value,10), b=parseInt($('mt-b').value,10), d=parseFloat($('mt-d').value), n=parseInt($('mt-n').value,10);
+  if(isNaN(a)||isNaN(b)||isNaN(d)||a<1||b<2){ out('out-mt','<div class="line no">a ≥ 1, b ≥ 2, d ≥ 0.</div>'); return; }
+  var logba=Math.log(a)/Math.log(b);
+  var caso, comp;
+  var eps=1e-9;
+  if(d < logba-eps){ caso='Caso 1 (hojas dominan)'; comp='Θ(n^'+fmt(logba,3)+')'; }
+  else if(Math.abs(d-logba)<=1e-6){ caso='Caso 2 (equilibrio)'; comp='Θ(n^'+fmt(d,3)+' · log n)'; }
+  else { caso='Caso 3 (raíz domina)'; comp='Θ(n^'+fmt(d,3)+')'; }
+  var html=kpi('log_b(a)', fmt(logba,4))+kpi('d', d)+kpi('Resultado', caso)+kpi('Complejidad', comp);
+  // recursion tree por niveles
+  html+='<div class="line">Árbol de recursión para n='+n+':</div>';
+  html+='<table class="cmp"><tr><th>Nivel</th><th>Subproblemas</th><th>Tamaño</th><th>Trabajo del nivel</th></tr>';
+  var level=0, size=n, total=0, subs=1, guard=0;
+  while(size>=1 && guard<40){
+    var work=subs*Math.pow(size,d);
+    total+=work;
+    html+='<tr><td>'+level+'</td><td class="mono">'+subs+'</td><td class="mono">'+fmt(size,3)+'</td><td class="mono">'+fmt(work,3)+'</td></tr>';
+    if(size<1.0001) break;
+    size=size/b; subs=subs*a; level++; guard++;
+    if(size<1) { size=1; }
+  }
+  html+='</table>';
+  html+='<div class="line">Trabajo total acumulado ≈ <b>'+fmt(total,2)+'</b>  ·  niveles ≈ '+(Math.round(Math.log(n)/Math.log(b)))+'</div>';
+  out('out-mt',html);
+}
+
+/* ============================================================
+   10 — Lista vs matriz de adyacencia
+   ============================================================ */
+function runReps(){
+  var n=parseInt($('rep-v').value,10); var edges=parseEdges($('rep-e').value,false);
+  var u=parseInt($('rep-u').value,10), v=parseInt($('rep-w').value,10);
+  if(isNaN(n)||n<1){ out('out-reps','<div class="line no">Número de vértices inválido.</div>'); return; }
+  var M=[]; for(var i=0;i<n;i++){ M[i]=[]; for(var j=0;j<n;j++) M[i][j]=0; }
+  var adj=buildAdj(n,edges,false);
+  edges.forEach(function(e){ if(e.u<n&&e.v<n){ M[e.u][e.v]=1; M[e.v][e.u]=1; } });
+  var exists = (u<n&&v<n&&u>=0&&v>=0) ? (M[u][v]===1) : false;
+  var html=kpi('¿Arista '+u+'–'+v+'?', '<span class="'+(exists?'ok':'no')+'">'+(exists?'SÍ':'NO')+'</span>');
+  html+='<table class="cmp"><tr><th>Operación</th><th>Matriz</th><th>Lista</th></tr>';
+  html+='<tr><td>Espacio</td><td class="mono">O(V²)</td><td class="mono">O(V+E)</td></tr>';
+  html+='<tr><td>¿Existe arista (u,v)?</td><td class="mono">O(1)</td><td class="mono">O(grado(u))</td></tr>';
+  html+='<tr><td>Recorrer vecinos de u</td><td class="mono">O(V)</td><td class="mono">O(grado(u))</td></tr>';
+  html+='<tr><td>Agregar arista</td><td class="mono">O(1)</td><td class="mono">O(1)</td></tr>';
+  html+='</table>';
+  html+='<div class="line" style="margin-top:8px">Matriz de adyacencia:</div><table class="grid"><tr><th>·</th>';
+  for(var j=0;j<n;j++) html+='<th>'+j+'</th>'; html+='</tr>';
+  for(var i=0;i<n;i++){ html+='<tr><th>'+i+'</th>'; for(var j=0;j<n;j++){ var hl=((i===u&&j===v)||(i===v&&j===u))?' class="hl"':''; html+='<td'+hl+'>'+M[i][j]+'</td>'; } html+='</tr>'; }
+  html+='</table>';
+  html+='<div class="line" style="margin-top:8px">Lista de adyacencia:</div><div class="steps">';
+  for(var i=0;i<n;i++){ html+=i+' → ['+adj[i].join(', ')+']\n'; }
+  html+='</div>';
+  $('out-reps').innerHTML=html;
+  drawGraph('out-reps', n, edges, {});
+}
+
+/* ============================================================
+   11 — Grados desde lista de adyacencia
+   ============================================================ */
+function runDegrees(){
+  var n=parseInt($('deg-v').value,10); var edges=parseEdges($('deg-e').value,false);
+  if(isNaN(n)||n<1){ out('out-deg','<div class="line no">Número de vértices inválido.</div>'); return; }
+  var adj=buildAdj(n,edges,false);
+  var sum=0;
+  var html='<table class="cmp"><tr><th>Vértice</th><th>Vecinos</th><th>Grado</th></tr>';
+  for(var i=0;i<n;i++){ sum+=adj[i].length; html+='<tr><td>'+i+'</td><td class="mono">['+adj[i].join(', ')+']</td><td class="mono"><b>'+adj[i].length+'</b></td></tr>'; }
+  html+='</table>';
+  var lemmaOK = (sum===2*edges.length);
+  html='<div>'+kpi('Σ grados', sum)+kpi('2·|aristas|', 2*edges.length)+kpi('Lema del apretón', '<span class="'+(lemmaOK?'ok':'no')+'">'+(lemmaOK?'CUMPLE ✓':'NO ✗')+'</span>')+'</div>'+html;
+  $('out-deg').innerHTML=html;
+  drawGraph('out-deg', n, edges, {});
+}
+
+/* ============================================================
+   12 — Isomorfismo por invariantes
+   ============================================================ */
+function invariants(n,edges){
+  var adj=buildAdj(n,edges,false);
+  var deg=adj.map(function(a){return a.length;}).sort(function(x,y){return x-y;});
+  return {V:n, E:edges.length, deg:deg};
+}
+function runIso(){
+  var n1=parseInt($('iso-v1').value,10), n2=parseInt($('iso-v2').value,10);
+  var e1=parseEdges($('iso-e1').value,false), e2=parseEdges($('iso-e2').value,false);
+  if(isNaN(n1)||isNaN(n2)||n1<1||n2<1){ out('out-iso','<div class="line no">Vértices inválidos.</div>'); return; }
+  var a=invariants(n1,e1), b=invariants(n2,e2);
+  var sameV=a.V===b.V, sameE=a.E===b.E, sameD=JSON.stringify(a.deg)===JSON.stringify(b.deg);
+  var all=sameV&&sameE&&sameD;
+  var html=kpi('Veredicto', all?'<span class="ok">PASA INVARIANTES</span>':'<span class="no">NO ISOMORFOS</span>');
+  html+='<table class="cmp"><tr><th>Invariante</th><th>G1</th><th>G2</th><th>¿Coincide?</th></tr>';
+  html+='<tr><td>|V|</td><td class="mono">'+a.V+'</td><td class="mono">'+b.V+'</td><td>'+(sameV?'✓':'✗')+'</td></tr>';
+  html+='<tr><td>|E|</td><td class="mono">'+a.E+'</td><td class="mono">'+b.E+'</td><td>'+(sameE?'✓':'✗')+'</td></tr>';
+  html+='<tr><td>Secuencia de grados</td><td class="mono">['+a.deg.join(',')+']</td><td class="mono">['+b.deg.join(',')+']</td><td>'+(sameD?'✓':'✗')+'</td></tr>';
+  html+='</table>';
+  html+='<div class="line">'+(all?'Coinciden todos los invariantes ⇒ pueden ser isomorfos (los invariantes son necesarios, no suficientes).':'Difiere al menos un invariante ⇒ es seguro que NO son isomorfos.')+'</div>';
+  out('out-iso',html);
+}
+
+/* ============================================================
+   13 — Conectividad y circuito de Euler
+   ============================================================ */
+function bfsReach(n,adj,src){ var vis=new Array(n).fill(false); var q=[src]; vis[src]=true; var cnt=1; while(q.length){ var u=q.shift(); adj[u].forEach(function(w){ if(!vis[w]){ vis[w]=true; cnt++; q.push(w);} }); } return {vis:vis,cnt:cnt}; }
+function runEuler(){
+  var n=parseInt($('eu-v').value,10); var edges=parseEdges($('eu-e').value,false);
+  if(isNaN(n)||n<1){ out('out-eu','<div class="line no">Número de vértices inválido.</div>'); return; }
+  var adj=buildAdj(n,edges,false);
+  var deg=adj.map(function(a){return a.length;});
+  var nonIso=[]; for(var i=0;i<n;i++) if(deg[i]>0) nonIso.push(i);
+  var connected=true;
+  if(nonIso.length>0){ var rr=bfsReach(n,adj,nonIso[0]); nonIso.forEach(function(v){ if(!rr.vis[v]) connected=false; }); }
+  var odd=deg.filter(function(d){return d%2===1;}).length;
+  var verdict, vclass;
+  if(!connected){ verdict='Ni circuito ni camino (no conexo)'; vclass='no'; }
+  else if(odd===0){ verdict='Circuito de Euler ✓'; vclass='ok'; }
+  else if(odd===2){ verdict='Camino de Euler (no circuito)'; vclass='ok'; }
+  else { verdict='No tiene recorrido de Euler ('+odd+' impares)'; vclass='no'; }
+  var html=kpi('Conexo', '<span class="'+(connected?'ok':'no')+'">'+(connected?'SÍ':'NO')+'</span>')+kpi('Vértices impares', odd)+kpi('Euler', '<span class="'+vclass+'">'+verdict+'</span>');
+  html+='<div class="line">Grados: ['+deg.join(', ')+']</div>';
+  $('out-eu').innerHTML=html;
+  drawGraph('out-eu', n, edges, {});
+}
+
+/* ============================================================
+   14 — BFS
+   ============================================================ */
+function runBFS(){
+  var n=parseInt($('bfs-v').value,10); var edges=parseEdges($('bfs-e').value,false); var s=parseInt($('bfs-s').value,10);
+  if(isNaN(n)||n<1||isNaN(s)||s<0||s>=n){ out('out-bfs','<div class="line no">Revisa vértices y origen (0 ≤ origen &lt; V).</div>'); return; }
+  var adj=buildAdj(n,edges,false);
+  var dist=new Array(n).fill(Infinity), vis=new Array(n).fill(false), order=[], q=[s];
+  vis[s]=true; dist[s]=0;
+  while(q.length){ var u=q.shift(); order.push(u); adj[u].forEach(function(w){ if(!vis[w]){ vis[w]=true; dist[w]=dist[u]+1; q.push(w);} }); }
+  var html=kpi('Orden de visita', order.join(' → '))+kpi('Origen', s);
+  html+='<table class="cmp"><tr><th>Vértice</th>'; for(var i=0;i<n;i++)html+='<th>'+i+'</th>'; html+='</tr><tr><td>Distancia</td>';
+  for(var i=0;i<n;i++)html+='<td class="mono">'+(dist[i]===Infinity?'∞':dist[i])+'</td>'; html+='</tr></table>';
+  $('out-bfs').innerHTML=html;
+  drawGraph('out-bfs', n, edges, {order:order, dist:dist});
+}
+
+/* ============================================================
+   15 — DFS
+   ============================================================ */
+function runDFS(){
+  var n=parseInt($('dfs-v').value,10); var edges=parseEdges($('dfs-e').value,false); var s=parseInt($('dfs-s').value,10);
+  if(isNaN(n)||n<1||isNaN(s)||s<0||s>=n){ out('out-dfs','<div class="line no">Revisa vértices y origen (0 ≤ origen &lt; V).</div>'); return; }
+  var adj=buildAdj(n,edges,false);
+  var vis=new Array(n).fill(false), order=[];
+  (function dfs(u){ vis[u]=true; order.push(u); adj[u].forEach(function(w){ if(!vis[w]) dfs(w); }); })(s);
+  var html=kpi('Orden de descubrimiento', order.join(' → '))+kpi('Origen', s);
+  html+='<div class="line">DFS recursivo: profundiza por el vecino menor disponible antes de retroceder.</div>';
+  $('out-dfs').innerHTML=html;
+  drawGraph('out-dfs', n, edges, {order:order});
+}
+
+/* ============================================================
+   16 — Prim
+   ============================================================ */
+function runPrim(){
+  var n=parseInt($('prim-v').value,10); var edges=parseEdges($('prim-e').value,true);
+  if(isNaN(n)||n<1){ out('out-prim','<div class="line no">Número de vértices inválido.</div>'); return; }
+  var adj=[]; for(var i=0;i<n;i++) adj.push([]);
+  edges.forEach(function(e){ if(e.u<n&&e.v<n){ adj[e.u].push({to:e.v,w:e.w}); adj[e.v].push({to:e.u,w:e.w}); } });
+  var inMST=new Array(n).fill(false); inMST[0]=true; var mstEdges=[], total=0, steps=[];
+  for(var it=0;it<n-1;it++){
+    var best=null;
+    for(var u=0;u<n;u++){ if(!inMST[u])continue; adj[u].forEach(function(e){ if(!inMST[e.to]){ if(best===null||e.w<best.w) best={u:u,v:e.to,w:e.w}; } }); }
+    if(best===null) break;
+    inMST[best.v]=true; mstEdges.push(best); total+=best.w;
+    steps.push('+ arista '+best.u+'–'+best.v+' (peso '+best.w+')');
+  }
+  var hl=mstEdges.map(function(e){return Math.min(e.u,e.v)+'-'+Math.max(e.u,e.v);});
+  var html=kpi('Peso total del MST', total)+kpi('Aristas', mstEdges.length+' / '+(n-1));
+  html+='<div class="steps">'+steps.join('\n')+'</div>';
+  $('out-prim').innerHTML=html;
+  drawGraph('out-prim', n, edges, {weighted:true, highlight:hl});
+}
+
+/* ============================================================
+   17 — Kruskal con Union-Find
+   ============================================================ */
+function makeUF(n){ var p=[],r=[]; for(var i=0;i<n;i++){p[i]=i;r[i]=0;} function find(x){ while(p[x]!==x){ p[x]=p[p[x]]; x=p[x]; } return x; } function union(a,b){ var ra=find(a),rb=find(b); if(ra===rb) return false; if(r[ra]<r[rb]){var t=ra;ra=rb;rb=t;} p[rb]=ra; if(r[ra]===r[rb])r[ra]++; return true; } return {find:find,union:union}; }
+function runKruskal(){
+  var n=parseInt($('krus-v').value,10); var edges=parseEdges($('krus-e').value,true);
+  if(isNaN(n)||n<1){ out('out-krus','<div class="line no">Número de vértices inválido.</div>'); return; }
+  var sorted=edges.slice().sort(function(a,b){return a.w-b.w;});
+  var uf=makeUF(n), mst=[], total=0, steps=[];
+  sorted.forEach(function(e){
+    if(e.u>=n||e.v>=n) return;
+    if(uf.union(e.u,e.v)){ mst.push(e); total+=e.w; steps.push('✓ '+e.u+'–'+e.v+' ('+e.w+') une conjuntos'); }
+    else steps.push('✗ '+e.u+'–'+e.v+' ('+e.w+') formaría ciclo');
+  });
+  var hl=mst.map(function(e){return Math.min(e.u,e.v)+'-'+Math.max(e.u,e.v);});
+  var html=kpi('Peso total del MST', total)+kpi('Aristas', mst.length+' / '+(n-1));
+  html+='<div class="line">Aristas ordenadas por peso, procesadas con Union-Find:</div><div class="steps">'+steps.join('\n')+'</div>';
+  $('out-krus').innerHTML=html;
+  drawGraph('out-krus', n, edges, {weighted:true, highlight:hl});
+}
+
+/* ============================================================
+   18 — Verificar árbol + hojas y altura
+   ============================================================ */
+function runVerifyTree(){
+  var n=parseInt($('tree-v').value,10); var edges=parseEdges($('tree-e').value,false); var root=parseInt($('tree-r').value,10);
+  if(isNaN(n)||n<1||isNaN(root)||root<0||root>=n){ out('out-tree','<div class="line no">Revisa vértices y raíz.</div>'); return; }
+  var adj=buildAdj(n,edges,false);
+  var rr=bfsReach(n,adj,root);
+  var connected=rr.cnt===n;
+  var isTree=connected && (edges.length===n-1);
+  var leaves=[]; for(var i=0;i<n;i++) if(adj[i].length===1) leaves.push(i);
+  // altura por BFS
+  var dist=new Array(n).fill(-1); dist[root]=0; var q=[root], height=0;
+  while(q.length){ var u=q.shift(); adj[u].forEach(function(w){ if(dist[w]<0){ dist[w]=dist[u]+1; if(dist[w]>height)height=dist[w]; q.push(w);} }); }
+  var html=kpi('¿Es árbol?', '<span class="'+(isTree?'ok':'no')+'">'+(isTree?'SÍ':'NO')+'</span>')+kpi('|E|', edges.length+' (se requiere '+(n-1)+')')+kpi('Conexo', connected?'sí':'no');
+  if(isTree){ html+=kpi('Hojas', leaves.length+' → {'+leaves.join(', ')+'}')+kpi('Altura desde '+root, height); }
+  else html+='<div class="line no">No cumple árbol: debe ser conexo y tener exactamente V−1 aristas.</div>';
+  $('out-tree').innerHTML=html;
+  drawGraph('out-tree', n, edges, {});
+}
+
+/* ============================================================
+   BST genérico (para 19, 21, 22, 23, 24)
+   ============================================================ */
+function bstInsert(root,key){ if(!root) return {key:key,left:null,right:null}; if(key<root.key) root.left=bstInsert(root.left,key); else if(key>root.key) root.right=bstInsert(root.right,key); return root; }
+function buildBST(arr){ var root=null; arr.forEach(function(k){ root=bstInsert(root,k); }); return root; }
+function preorder(nd,r){ if(!nd)return; r.push(nd.key); preorder(nd.left,r); preorder(nd.right,r); }
+function inorder(nd,r){ if(!nd)return; inorder(nd.left,r); r.push(nd.key); inorder(nd.right,r); }
+function postorder(nd,r){ if(!nd)return; postorder(nd.left,r); postorder(nd.right,r); r.push(nd.key); }
+
+/* ============================================================
+   19 — Preorden e inorden
+   ============================================================ */
+function runTraversals(){
+  var arr=parseNums($('trav-arr').value);
+  if(arr.length===0){ out('out-trav','<div class="line no">Ingresa al menos un valor.</div>'); return; }
+  var root=buildBST(arr); var pre=[],ino=[]; preorder(root,pre); inorder(root,ino);
+  var html=kpi('Preorden', pre.join(' → '))+kpi('Inorden', ino.join(' → '));
+  html+='<div class="line">El inorden de un BST queda en orden creciente ✓</div>';
+  $('out-trav').innerHTML=html;
+  drawTree('out-trav', root, []);
+}
+
+/* ============================================================
+   20 — Postorden + AST
+   ============================================================ */
+function parseExpr(str){
+  var s=String(str).replace(/\s+/g,''), i=0;
+  function peek(){ return s[i]; }
+  function number(){ var st=i; while(i<s.length && /[0-9.]/.test(s[i])) i++; return {key:s.slice(st,i), left:null, right:null}; }
+  function factor(){ if(peek()==='('){ i++; var e=expr(); if(peek()===')')i++; return e; } return number(); }
+  function term(){ var nd=factor(); while(peek()==='*'||peek()==='/'){ var op=s[i++]; nd={key:op,left:nd,right:factor()}; } return nd; }
+  function expr(){ var nd=term(); while(peek()==='+'||peek()==='-'){ var op=s[i++]; nd={key:op,left:nd,right:term()}; } return nd; }
+  return expr();
+}
+function evalAST(nd){ if(!nd.left&&!nd.right) return parseFloat(nd.key); var a=evalAST(nd.left), b=evalAST(nd.right); switch(nd.key){ case '+':return a+b; case '-':return a-b; case '*':return a*b; case '/':return a/b; } return NaN; }
+function runAST(){
+  var expr=$('ast-expr').value;
+  try{
+    var root=parseExpr(expr);
+    if(!root){ throw 'vacío'; }
+    var post=[]; postorder(root,post);
+    var val=evalAST(root);
+    var html=kpi('Expresión', esc(expr))+kpi('Postorden (RPN)', post.join(' '))+kpi('Resultado', fmt(val,4));
+    $('out-ast').innerHTML=html;
+    drawTree('out-ast', root, []);
+  }catch(e){ out('out-ast','<div class="line no">No se pudo parsear la expresión. Usa + − * / y paréntesis.</div>'); }
+}
+
+/* ============================================================
+   21 — Recorrido por niveles
+   ============================================================ */
+function runLevelOrder(){
+  var arr=parseNums($('lvl-arr').value);
+  if(arr.length===0){ out('out-lvl','<div class="line no">Ingresa al menos un valor.</div>'); return; }
+  var root=buildBST(arr);
+  var levels=[], q=[root];
+  while(q.length){ var sz=q.length, lvl=[]; for(var i=0;i<sz;i++){ var nd=q.shift(); lvl.push(nd.key); if(nd.left)q.push(nd.left); if(nd.right)q.push(nd.right); } levels.push(lvl); }
+  var flat=[]; levels.forEach(function(l){ l.forEach(function(k){ flat.push(k); }); });
+  var html=kpi('Orden por niveles', flat.join(' → '))+kpi('Niveles', levels.length);
+  html+='<div class="steps">';
+  levels.forEach(function(l,i){ html+='Nivel '+i+': '+l.join(', ')+'\n'; });
+  html+='</div>';
+  $('out-lvl').innerHTML=html;
+  drawTree('out-lvl', root, []);
+}
+
+/* ============================================================
+   22 — Búsqueda en BST
+   ============================================================ */
+function runBSTSearch(){
+  var arr=parseNums($('bsts-arr').value); var x=parseInt($('bsts-x').value,10);
+  if(arr.length===0||isNaN(x)){ out('out-bsts','<div class="line no">Ingresa el árbol y un valor a buscar.</div>'); return; }
+  var root=buildBST(arr);
+  var path=[], cur=root, found=false;
+  while(cur){ path.push(cur.key); if(x===cur.key){ found=true; break; } cur = x<cur.key ? cur.left : cur.right; }
+  var html=kpi('Buscar', x)+kpi('Resultado', '<span class="'+(found?'ok':'no')+'">'+(found?'ENCONTRADO ✓':'NO ESTÁ ✗')+'</span>')+kpi('Comparaciones', path.length);
+  html+='<div class="line">Camino recorrido: '+path.join(' → ')+'</div>';
+  $('out-bsts').innerHTML=html;
+  drawTree('out-bsts', root, path);
+}
+
+/* ============================================================
+   23 — Inserción en BST (estado persistente)
+   ============================================================ */
+var BSTI_INIT=[50,30,70,20,40,60,80];
+var bstiRoot=buildBST(BSTI_INIT.slice());
+function resetBSTInsert(){ bstiRoot=buildBST(BSTI_INIT.slice()); renderBSTInsert([], '<div class="line">Árbol reiniciado a {'+BSTI_INIT.join(', ')+'}.</div>'); }
+function renderBSTInsert(path, msg){
+  $('out-bsti').innerHTML=(msg||'')+kpi('Inorden', (function(){var r=[];inorder(bstiRoot,r);return r.join(' → ');})());
+  drawTree('out-bsti', bstiRoot, path||[]);
+}
+function runBSTInsert(){
+  var x=parseInt($('bsti-x').value,10);
+  if(isNaN(x)){ renderBSTInsert([], '<div class="line no">Ingresa un valor entero.</div>'); return; }
+  var path=[], cur=bstiRoot, dup=false;
+  while(cur){ path.push(cur.key); if(x===cur.key){ dup=true; break; } cur = x<cur.key ? cur.left : cur.right; }
+  bstiRoot=bstInsert(bstiRoot,x);
+  var msg = dup ? '<div class="line no">'+x+' ya existe (duplicado ignorado).</div>'
+                : '<div class="line ok">Insertado '+x+'. Camino: '+path.join(' → ')+' → ['+x+']</div>';
+  renderBSTInsert(path.concat([x]), msg);
+}
+
+/* ============================================================
+   24 — Eliminación en BST (estado persistente)
+   ============================================================ */
+var BSTD_INIT=[50,30,70,20,40,60,80];
+var bstdRoot=buildBST(BSTD_INIT.slice());
+function bstDelete(root,key,log){
+  if(!root){ log.push('Valor '+key+' no encontrado.'); return null; }
+  if(key<root.key) root.left=bstDelete(root.left,key,log);
+  else if(key>root.key) root.right=bstDelete(root.right,key,log);
+  else{
+    if(!root.left&&!root.right){ log.push('Caso 1 — hoja: se elimina '+key+'.'); return null; }
+    if(!root.left){ log.push('Caso 2 — un hijo (derecho): '+root.right.key+' ocupa el lugar de '+key+'.'); return root.right; }
+    if(!root.right){ log.push('Caso 2 — un hijo (izquierdo): '+root.left.key+' ocupa el lugar de '+key+'.'); return root.left; }
+    var succ=root.right; while(succ.left) succ=succ.left;
+    log.push('Caso 3 — dos hijos: sucesor inorden = '+succ.key+', reemplaza a '+key+'.');
+    root.key=succ.key; root.right=bstDelete(root.right,succ.key,log);
+  }
+  return root;
+}
+function resetBSTDelete(){ bstdRoot=buildBST(BSTD_INIT.slice()); $('out-bstd').innerHTML='<div class="line">Árbol reiniciado a {'+BSTD_INIT.join(', ')+'}.</div>'; drawTree('out-bstd', bstdRoot, []); }
+function runBSTDelete(){
+  var x=parseInt($('bstd-x').value,10);
+  if(isNaN(x)){ $('out-bstd').innerHTML='<div class="line no">Ingresa un valor entero.</div>'; drawTree('out-bstd', bstdRoot, []); return; }
+  var log=[]; bstdRoot=bstDelete(bstdRoot,x,log);
+  var r=[]; inorder(bstdRoot,r);
+  $('out-bstd').innerHTML='<div class="steps">'+log.join('\n')+'</div>'+kpi('Inorden tras eliminar', r.length?r.join(' → '):'(vacío)');
+  drawTree('out-bstd', bstdRoot, []);
+}
+
+/* ============================================================
+   25 — Rotaciones AVL
+   ============================================================ */
+var avlRoot=null, avlLog=[];
+function avlH(n){ return n? n.h : 0; }
+function avlUpd(n){ n.h = 1 + Math.max(avlH(n.left), avlH(n.right)); }
+function avlBF(n){ return n? avlH(n.left)-avlH(n.right) : 0; }
+function rotR(y){ var x=y.left, T2=x.right; x.right=y; y.left=T2; avlUpd(y); avlUpd(x); return x; }
+function rotL(x){ var y=x.right, T2=y.left; y.left=x; x.right=T2; avlUpd(x); avlUpd(y); return y; }
+function avlInsert(node,key){
+  if(!node) return {key:key,left:null,right:null,h:1};
+  if(key<node.key) node.left=avlInsert(node.left,key);
+  else if(key>node.key) node.right=avlInsert(node.right,key);
+  else { avlLog.push(key+' ya existe (ignorado).'); return node; }
+  avlUpd(node);
+  var b=avlBF(node);
+  if(b>1 && key<node.left.key){ avlLog.push('Desbalance en '+node.key+' (FB='+b+') → rotación LL (derecha).'); return rotR(node); }
+  if(b<-1 && key>node.right.key){ avlLog.push('Desbalance en '+node.key+' (FB='+b+') → rotación RR (izquierda).'); return rotL(node); }
+  if(b>1 && key>node.left.key){ avlLog.push('Desbalance en '+node.key+' (FB='+b+') → rotación LR (izq-der).'); node.left=rotL(node.left); return rotR(node); }
+  if(b<-1 && key<node.right.key){ avlLog.push('Desbalance en '+node.key+' (FB='+b+') → rotación RL (der-izq).'); node.right=rotR(node.right); return rotL(node); }
+  return node;
+}
+function renderAVL(){
+  var r=[]; inorder(avlRoot,r);
+  $('out-avl').innerHTML='<div class="steps">'+(avlLog.length?avlLog.join('\n'):'(sin rotaciones todavía)')+'</div>'+kpi('Inorden', r.length?r.join(' → '):'(vacío)')+kpi('Altura', avlH(avlRoot));
+  drawTree('out-avl', avlRoot, []);
+}
+function resetAVL(){ avlRoot=null; avlLog=[]; renderAVL(); }
+function runAVLInsert(){
+  var x=parseInt($('avl-x').value,10);
+  if(isNaN(x)){ avlLog.push('Ingresa un valor entero.'); renderAVL(); return; }
+  avlLog.push('Insertar '+x+':'); avlRoot=avlInsert(avlRoot,x); $('avl-x').value=''; renderAVL();
+}
+function avlPreset(type){
+  avlRoot=null; avlLog=[];
+  var seq = type==='ll'?[30,20,10] : type==='rr'?[10,20,30] : type==='lr'?[30,10,20] : [10,30,20];
+  avlLog.push('Demo '+type.toUpperCase()+' — insertando '+seq.join(', ')+':');
+  seq.forEach(function(k){ avlRoot=avlInsert(avlRoot,k); });
+  renderAVL();
+}
+
+/* ============================================================
+   ÍNDICE / NAVEGACIÓN + INICIALIZACIÓN
+   ============================================================ */
+function buildNav(){
+  var secs=document.querySelectorAll('section.algo');
+  var nav=$('tocNav'), mob=$('mobileNav'), html='', mhtml='<option value="">— Ir a un algoritmo —</option>';
+  var groups={1:'Combinatoria y probabilidad', 6:'Estructuras y recursión', 10:'Grafos', 18:'Árboles'};
+  secs.forEach(function(sec,i){
+    var num=String(i+1).padStart(2,'0'); var title=sec.getAttribute('data-title');
+    if(groups[i+1]) html+='<div class="grp">'+groups[i+1]+'</div>';
+    html+='<a href="#'+sec.id+'" data-id="'+sec.id+'"><span class="n">'+num+'</span><span>'+title+'</span></a>';
+    mhtml+='<option value="'+sec.id+'">'+num+' · '+title+'</option>';
+  });
+  nav.innerHTML=html; mob.innerHTML=mhtml;
+  mob.addEventListener('change', function(){ if(this.value){ var el=$(this.value); if(el) el.scrollIntoView(); } });
+  // resaltado activo
+  if('IntersectionObserver' in window){
+    var links={}; nav.querySelectorAll('a').forEach(function(a){ links[a.getAttribute('data-id')]=a; });
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ Object.keys(links).forEach(function(k){links[k].classList.remove('active');}); var a=links[en.target.id]; if(a) a.classList.add('active'); } });
+    }, {rootMargin:'-40% 0px -55% 0px'});
+    secs.forEach(function(s){ obs.observe(s); });
+  }
+}
+
+window.addEventListener('DOMContentLoaded', function(){
+  buildNav();
+  buildNBChecks();
+  // Ejecutar cada algoritmo con sus datos de ejemplo para que la página abra con resultados
+  runBinomial(); runNetwork(); runParallel(); runBayes(); runNaive(); runHash(); runCombRep();
+  runMerge(); runMaster(); runReps(); runDegrees(); runIso(); runEuler(); runBFS(); runDFS();
+  runPrim(); runKruskal(); runVerifyTree(); runTraversals(); runAST(); runLevelOrder();
+  runBSTSearch(); renderBSTInsert([], '<div class="line">Árbol de ejemplo: {'+BSTI_INIT.join(', ')+'}.</div>');
+  drawTree('out-bstd', bstdRoot, []); avlPreset('rr');
+});
+</script>
+</body>
+</html>
