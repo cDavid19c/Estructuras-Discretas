@@ -6,8 +6,7 @@ Cada algoritmo incluye descripción, cómo se ejecuta, ejemplo precargado, contr
 
 **Autores:** Shirley Pilataxi · David Ocampo
 
-## Uso
-Abre `index.html` en cualquier navegador, o visita la versión publicada con GitHub Pages.
+
 
 ## Contenido
 Combinatoria y probabilidad, estructuras y recursión, grafos (BFS, DFS, Prim, Kruskal, Euler) y árboles (recorridos, BST, AVL).
